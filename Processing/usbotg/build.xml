@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<project name="usbotg" basedir="." default="install">
+    <presetdef name="javac">
+        <javac includeantruntime="false" />
+    </presetdef>
+    
+    <!-- jar include paths -->
+    <property environment="env" />
+    <condition property="sdk.dir" value="${env.ANDROID_HOME}">
+        <isset property="env.ANDROID_HOME" />
+    </condition>
+    <path id="jar.include">
+        <fileset dir="${sdk.dir}/platforms/android-19"> 
+            <include name="android.jar" />
+        </fileset>
+        <fileset dir="${sdk.dir}/add-ons/addon-google_apis-google-19/libs">
+            <include name="usb.jar" />
+        </fileset>
+    </path>
+    
+    <!-- clean -->
+    <target name="clean">
+        <delete dir="classes" failonerror="false" />
+        <delete dir="jar/usbotg" failonerror="false" />
+        <delete file="library/usbotg.jar" failonerror="false" />
+    </target>
+
+    <!-- compile -->
+    <target name="compile">
+        <mkdir dir="classes" />
+        <javac srcdir="src" destdir="classes">
+            <classpath>
+                <path refid="jar.include" />
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- jar -->
+    <target name="jar" depends="compile">
+        <mkdir dir="jar/usbotg" />
+        <jar destfile="jar/usbotg/usbotg.jar" basedir="classes" />
+    </target>
+
+    <!-- install -->
+    <target name="install" depends="jar">
+        <copy todir="library">
+            <fileset dir="jar/usbotg" includes="usbotg.jar" />
+        </copy>
+    </target>
+        
+    <target name="help" />
+</project>
